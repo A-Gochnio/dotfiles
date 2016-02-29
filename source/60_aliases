@@ -1,0 +1,2 @@
+alias wttr="curl -4 wttr.in/"
+alias untar="tar xvzf"
