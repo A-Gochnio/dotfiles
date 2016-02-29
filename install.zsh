@@ -1,5 +1,10 @@
 #!/bin/zsh
 # Assumes there's git and zsh installed
+# Uncomment correct line for OS:
+# OSX
+INSTALL="brew update && brew"
+# ubuntu
+#INSTALL="apt-get update && apt-get install"
 
 DOTFILES="$HOME/.dotfiles"
 
@@ -15,6 +20,13 @@ cd $DOTFILES
 # update to newest version
 git pull
 
+# download necessary things:
+# tmux plugin manager
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+# fonts for terminal
+git clone https://github.com/powerline/fonts.git ~/.powerline_fonts
+source ~/.powerline_fonts/install.sh
 
 # do the linking
 cd "$DOTFILES"/link
@@ -27,7 +39,7 @@ done
 
 cd "$DOTFILES"/source
 for source_file in *; do
-  echo "Sourcing: " ~/$source_file
-  source ~/"$source_file"
+  echo "Sourcing: " $source_file
+  source "$source_file"
 done
 
