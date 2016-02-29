@@ -7,6 +7,7 @@ INSTALL="brew update && brew"
 #INSTALL="apt-get update && apt-get install"
 
 export DOTFILES="$HOME/.dotfiles"
+ZSH_CUSTOM="$HOME/.oh-my-zsh/"
 
 # create dotfile directory if needed
 if test ! -d "$DOTFILES"; then
@@ -27,11 +28,9 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 git clone https://github.com/powerline/fonts.git ~/.powerline_fonts
 source ~/.powerline_fonts/install.sh
 
-# liquid prompt (fancy prompt info)
-cd
-git clone https://github.com/nojhan/liquidprompt.git .liquidprompt
-source .liquidprompt/liquidprompt
-
+# oh-my-zsh theme
+echo 
+cp -rf "$DOTFILES"/conf/agnoster.zsh-theme  "$ZSH_CUSTOM"/themes/
 
 # do the linking
 #cd "$DOTFILES"/link
