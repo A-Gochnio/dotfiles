@@ -1,2 +1,2 @@
 # Only load Liquid Prompt in interactive shells, not from a script or from scp
-[[ $- = *i* ]] && [ -e "~$DOTFILES/tmp/liquidprompt" ] && source ~$DOTFILES/tmp/liquidprompt/liquidprompt
+source $DOTFILES/tmp/liquidprompt/liquidprompt
