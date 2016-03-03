@@ -9,6 +9,10 @@ INSTALL="brew update && brew"
 export DOTFILES="$HOME/.dotfiles"
 ZSH_CUSTOM="$HOME/.oh-my-zsh/"
 
+if test ! -d "$ZSH_CUSTOM"; then
+  sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+fi
+
 # create dotfile directory if needed
 if test ! -d "$DOTFILES"; then
   git clone https://github.com/A-Gochnio/dotfiles.git "$DOTFILES"
