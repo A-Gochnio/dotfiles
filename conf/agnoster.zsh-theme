@@ -164,7 +164,15 @@ prompt_hg() {
 
 # Dir: current working directory
 prompt_dir() {
-  prompt_segment blue black '%~'
+   CITC_ROOT="/google/src/cloud/${USER}/"
+   local org_path=$(print -P '%~')
+   local client=$(echo $org_path | sed -nr "s#${CITC_ROOT}([^/]*).*#\1#p")
+   if [ ! -z "$client" ]; then
+       prompt_segment yellow black ${client}
+       prompt_segment blue black ${org_path#"${CITC_ROOT}${client}"}
+   else
+       prompt_segment blue black '%~'
+   fi
 }
 
 prompt_time() {
