@@ -50,11 +50,11 @@ COMPLETION_WAITING_DOTS="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git colored-man-pages common-aliases tmux)
+plugins=(colored-man-pages common-aliases tmux)
 
 # User configuration
 
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/lib/google-dartlang/bin"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/lib/spectrum.zsh
@@ -80,3 +80,6 @@ source $ZSH/oh-my-zsh.sh
 
 source "$DOTFILES"/source.zsh
 source /etc/bash_completion.d/g4d
+
+P4MERGE=bash -c "chmod u+w \$1 ; meld \$2 \$1 \$3 ; cp \$1 \$4" padding-to-occupy-argv0
+

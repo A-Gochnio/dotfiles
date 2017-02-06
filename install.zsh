@@ -36,6 +36,9 @@ source ~/.powerline_fonts/install.sh
 echo 
 cp -rf "$DOTFILES"/conf/agnoster.zsh-theme  "$ZSH_CUSTOM"/themes/
 
+# copy JS nanorc to nano folder
+cp "$DOTFILES"/conf/javascript.nanorc /usr/share/nano
+
 # do the linking
 #cd "$DOTFILES"/link
 for link_file in "$DOTFILES"/link/.[^.]*; do
