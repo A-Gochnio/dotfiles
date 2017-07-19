@@ -80,5 +80,3 @@ source $ZSH/oh-my-zsh.sh
 
 source "$DOTFILES"/source.zsh
 
-P4MERGE="chmod u+w \$1 ; meld \$2 \$1 \$3 ; cp \$1 \$4" padding-to-occupy-argv0
-
