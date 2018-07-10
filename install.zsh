@@ -53,13 +53,22 @@ git clone https://github.com/powerline/fonts.git ~/.powerline_fonts
 source ~/.powerline_fonts/install.sh
 
 # oh-my-zsh theme
-echo 
+echo
 cp -rf "$DOTFILES"/conf/agnoster.zsh-theme  "$ZSH_CUSTOM"/themes/
 
 # do the linking
 #cd "$DOTFILES"/link
 for link_file in "$DOTFILES"/link/.[^.]*; do
-  echo "Linking " $link_file " to " ~/$(basename $link_file)  
+  home_file=~/$(basename $link_file)
+  echo "Linking " $link_file " to " $home_file
+  if [ -f $home_file ] && [ -L $home_file ]; then
+    echo "File "$home_file" exists and is a symlink. Unlinking..."
+    rm $home_file
+  elif [ -f $home_file ] && [ ! -L $home_file ]; then
+    echo "File "$home_file" exists, renaming to "$home_file".bak"
+    mv $home_file "$home_file.bak"
+  else
+  fi
   ln -s "$link_file" ~/"$(basename $link_file)"
 done
 
