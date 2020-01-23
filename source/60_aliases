@@ -1,3 +1,4 @@
 alias wttr="curl -4 wttr.in/"
 alias untar="tar xvzf"
 alias enplugscripts="npm install @enplug/scripts@latest"
+alias staging_auth_token="~/.dotfiles/scripts/staging_auth_token"
