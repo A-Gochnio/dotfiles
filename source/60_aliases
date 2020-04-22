@@ -2,3 +2,7 @@ alias wttr="curl -4 wttr.in/"
 alias untar="tar xvzf"
 alias enplugscripts="npm install @enplug/scripts@latest"
 alias staging_auth_token="~/.dotfiles/scripts/staging_auth_token"
+alias staple_mac_screensaver="/usr/bin/xcrun stapler staple Enplug\ Screen\ Saver.saver"
+alias notarization_progress="/usr/bin/xcrun altool --notarization-history 0 -u agochnio@gmail.com -p @keychain:AC_PASSWORD"
+alias notarize_mac_screensaver='f() { /usr/bin/xcrun altool --verbose --notarize-app --primary-bundle-id Enplug.Screensaver -u agochnio@gmail.com -t  -p $1 osx -f Enplug\ Screen\ Saver.saver.zip; };f'
+alias example='f() { echo Your arg was $1. };f'
