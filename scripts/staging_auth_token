@@ -1,5 +1,5 @@
 #!/bin/zsh
-sed -i '.bak' 's/"staging_auth_token".*/"staging_auth_token": "'$1'"/g' ~/enplug/dev.private.json
+sed -i '.bak' 's/"staging_auth_token".*/"staging_auth_token": "'$1'",/g' ~/enplug/dev.private.json
 
 
 

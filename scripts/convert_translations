@@ -1,0 +1,12 @@
+#!/bin/bash
+
+name_regex="([a-z]{2})_([A-Z]{2})\.po"
+
+for f in *.po; do 
+echo "Processing $f file.."
+  if [[ $f =~ $name_regex ]]
+  then
+	po2tmx "${BASH_REMATCH[1]}_${BASH_REMATCH[2]}.po" "${BASH_REMATCH[1]}-${BASH_REMATCH[2]}.tmx" --language "${BASH_REMATCH[1]}-${BASH_REMATCH[2]}"
+  fi
+done
+
