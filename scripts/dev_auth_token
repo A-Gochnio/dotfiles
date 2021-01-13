@@ -1,0 +1,5 @@
+#!/bin/zsh
+sed -i '.bak' 's/"dev_auth_token".*/"dev_auth_token": "'$1'",/g' ~/enplug/dev.private.json
+
+
+
