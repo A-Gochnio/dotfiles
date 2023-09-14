@@ -92,3 +92,5 @@ eval "$(pyenv init -)"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+# brew for Apple Sillicon
+eval $(/opt/homebrew/bin/brew shellenv)
