@@ -85,3 +85,10 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init --path)" 
 eval "$(pyenv init -)"
 
+# bun completions
+[ -s "/Users/agochnio/.bun/_bun" ] && source "/Users/agochnio/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
