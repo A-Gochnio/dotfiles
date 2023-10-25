@@ -56,6 +56,9 @@ source ~/.powerline_fonts/install.sh
 echo
 cp -rf "$DOTFILES"/conf/agnoster.zsh-theme  "$ZSH_CUSTOM"/themes/
 
+# install zsh-nvm plugin (for node version mgmt)
+git clone https://github.com/lukechilds/zsh-nvm ~/.dotfiles/zsh-custom/plugins/zsh-nvm
+
 # do the linking
 #cd "$DOTFILES"/link
 for link_file in "$DOTFILES"/link/.[^.]*; do
