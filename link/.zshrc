@@ -96,5 +96,13 @@ eval "$(pyenv init -)"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+# docker
+export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin/"
+
 # brew for Apple Sillicon
 eval $(/opt/homebrew/bin/brew shellenv)
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/agochnio/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions

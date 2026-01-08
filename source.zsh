@@ -1,8 +1,7 @@
 #!/bin/zsh
-cd "$DOTFILES"/source
-for source_file in *; do
-  #echo "Sourcing: " $source_file
+# Source every regular file inside "$DOTFILES/source"
+
+for source_file in "$DOTFILES"/source/*; do
+  [[ -f $source_file ]] || continue   # skip sub-dirs, symlinks, etc.
   source "$source_file"
 done
-
-cd ~

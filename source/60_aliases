@@ -7,3 +7,16 @@ alias staple_mac_screensaver="/usr/bin/xcrun stapler staple Enplug\ Screen\ Save
 alias notarization_progress="/usr/bin/xcrun altool --notarization-history 0 -u REDACTED_EMAIL -p @keychain:AC_PASSWORD"
 alias notarize_mac_screensaver='f() { /usr/bin/xcrun altool --verbose --notarize-app --primary-bundle-id Enplug.Screensaver -u REDACTED_EMAIL -t  -p $1 osx -f Enplug\ Screen\ Saver.saver.zip; };f'
 alias nvm_init="source ~/.dotfiles/scripts/nvm_init.sh"
+alias cp="cp -R"
+
+# Liberty aliases
+
+alias k9s-eu-prod='kubectx arn:aws:eks:eu-west-1:REDACTED_AWS_ACCOUNT_ID_1:cluster/tapnav-eks-production;  aws-vault exec ntapnav-production -- k9s'
+alias k9s-us-prod='kubectx arn:aws:eks:us-east-1:REDACTED_AWS_ACCOUNT_ID_1:cluster/tapnav-eks-production-virginia;  aws-vault exec ntapnav-production-virginia -- k9s'
+alias k9s-eu-stg='kubectx arn:aws:eks:eu-west-1:REDACTED_AWS_ACCOUNT_ID_2:cluster/tapnav-eks-staging; aws-vault exec ntapnav-staging -- k9s'
+alias k9s-us-stg='kubectx arn:aws:eks:us-east-1:REDACTED_AWS_ACCOUNT_ID_2:cluster/tapnav-eks-staging-virginia; aws-vault exec ntapnav-staging-virginia -- k9s'
+alias kube-eu-prod='kubectx arn:aws:eks:eu-west-1:REDACTED_AWS_ACCOUNT_ID_1:cluster/tapnav-eks-production;  aws-vault exec ntapnav-production -- kubectl'
+alias kube-us-prod='kubectx arn:aws:eks:us-east-1:REDACTED_AWS_ACCOUNT_ID_1:cluster/tapnav-eks-production-virginia;  aws-vault exec ntapnav-production-virginia -- kubectl'
+alias kube-eu-stg='kubectx arn:aws:eks:eu-west-1:REDACTED_AWS_ACCOUNT_ID_2:cluster/tapnav-eks-staging; aws-vault exec ntapnav-staging -- kubectl'
+alias kube-us-stg='kubectx arn:aws:eks:us-east-1:REDACTED_AWS_ACCOUNT_ID_2:cluster/tapnav-eks-staging-virginia; aws-vault exec ntapnav-staging-virginia -- kubectl'
+alias k9s-us-stg='kubectx arn:aws:eks:us-east-1:REDACTED_AWS_ACCOUNT_ID_2:cluster/tapnav-eks-staging-virginia; aws-vault exec ntapnav-staging-virginia -- k9s'
