@@ -1,7 +1,5 @@
 #!/bin/zsh
 # Assumes there's git and zsh installed
-# Uncomment correct line for OS:
-# OSX
 
 if [[ `uname` == 'Linux' ]]; then
   export OS=linux
@@ -9,11 +7,14 @@ elif [[ `uname` == 'Darwin' ]]; then
   export OS=osx
 fi
 
+export DOTFILES="$HOME/.dotfiles"
+ZSH_CUSTOM="$HOME/.oh-my-zsh/"
+
 # osx
 if [[ $OS == 'osx' ]]; then
-  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   INSTALL="brew update && brew"
-  brew install gnu-sed --with-default-names
+  brew install gnu-sed
   brew install nano
   brew install tmux
   cp "$DOTFILES"/conf/javascript.nanorc /usr/local/share/nano
@@ -24,10 +25,6 @@ elif [[ $OS == 'linux' ]]; then
   cp "$DOTFILES"/conf/javascript.nanorc /usr/share/nano
   cp "$DOTFILES"/conf/.nanorc-linux ~/.nanorc
 fi
-
-
-export DOTFILES="$HOME/.dotfiles"
-ZSH_CUSTOM="$HOME/.oh-my-zsh/"
 
 if test ! -d "$ZSH_CUSTOM"; then
   sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
@@ -60,27 +57,18 @@ cp -rf "$DOTFILES"/conf/agnoster.zsh-theme  "$ZSH_CUSTOM"/themes/
 git clone https://github.com/lukechilds/zsh-nvm ~/.dotfiles/zsh-custom/plugins/zsh-nvm
 
 # do the linking
-#cd "$DOTFILES"/link
 for link_file in "$DOTFILES"/link/.[^.]*; do
-  home_file=~/$(basename $link_file)
-  echo "Linking " $link_file " to " $home_file
-  if [ -f $home_file ] && [ -L $home_file ]; then
-    echo "File "$home_file" exists and is a symlink. Unlinking..."
-    rm $home_file
-  elif [ -f $home_file ] && [ ! -L $home_file ]; then
-    echo "File "$home_file" exists, renaming to "$home_file".bak"
-    mv $home_file "$home_file.bak"
-  else
+  home_file=~/"$(basename "$link_file")"
+  echo "Linking $link_file to $home_file"
+  if [ -f "$home_file" ] && [ -L "$home_file" ]; then
+    echo "File $home_file exists and is a symlink. Unlinking..."
+    rm "$home_file"
+  elif [ -f "$home_file" ] && [ ! -L "$home_file" ]; then
+    echo "File $home_file exists, renaming to ${home_file}.bak"
+    mv "$home_file" "${home_file}.bak"
   fi
-  ln -s "$link_file" ~/"$(basename $link_file)"
+  ln -s "$link_file" ~/"$(basename "$link_file")"
 done
 
 # do the sourcing
 source ~/.zshrc
-
-#cd "$DOTFILES"/source
-#for source_file in *; do
-#  echo "Sourcing: " $source_file
-#  source "$source_file"
-#done
-

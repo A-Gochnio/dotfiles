@@ -3,6 +3,9 @@ export ZSH="$HOME"/.oh-my-zsh
 export DOTFILES=~/.dotfiles
 export ZSH_CUSTOM=$DOTFILES/zsh-custom
 
+# Deduplicate PATH entries
+typeset -U path
+
 if [[ `uname` == 'Linux' ]]; then
   export OS=linux
 elif [[ `uname` == 'Darwin' ]]; then
@@ -88,14 +91,20 @@ type _zsh_nvm_load &>/dev/null || _zsh_nvm_load() { :; }
 
 export NODE_OPTIONS=--max_old_space_size=4096
 
-# These vars to PYENV, python version manager
-export PYENV_ROOT="$HOME/.pyenv" 
-export PATH="$PYENV_ROOT/bin:$PATH" 
-eval "$(pyenv init --path)" 
-eval "$(pyenv init -)"
+# pyenv (lazy-loaded for faster shell startup)
+export PYENV_ROOT="$HOME/.pyenv"
+if [[ -d "$PYENV_ROOT" ]]; then
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  pyenv() {
+    unfunction pyenv
+    eval "$(command pyenv init --path)"
+    eval "$(command pyenv init -)"
+    pyenv "$@"
+  }
+fi
 
 # bun completions
-[ -s "/Users/agochnio/.bun/_bun" ] && source "/Users/agochnio/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
@@ -107,8 +116,5 @@ export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin/"
 # brew for Apple Sillicon
 eval $(/opt/homebrew/bin/brew shellenv)
 # The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/agochnio/.docker/completions $fpath)
-autoload -Uz compinit
-compinit
-# End of Docker CLI completions
+fpath=("$HOME/.docker/completions" $fpath)
 export PATH="$HOME/.local/bin:$PATH"
