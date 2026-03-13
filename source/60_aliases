@@ -20,3 +20,7 @@ alias kube-us-prod='kubectx arn:aws:eks:us-east-1:REDACTED_AWS_ACCOUNT_ID_1:clus
 alias kube-eu-stg='kubectx arn:aws:eks:eu-west-1:REDACTED_AWS_ACCOUNT_ID_2:cluster/tapnav-eks-staging; aws-vault exec ntapnav-staging -- kubectl'
 alias kube-us-stg='kubectx arn:aws:eks:us-east-1:REDACTED_AWS_ACCOUNT_ID_2:cluster/tapnav-eks-staging-virginia; aws-vault exec ntapnav-staging-virginia -- kubectl'
 alias k9s-us-stg='kubectx arn:aws:eks:us-east-1:REDACTED_AWS_ACCOUNT_ID_2:cluster/tapnav-eks-staging-virginia; aws-vault exec ntapnav-staging-virginia -- k9s'
+
+# Claude Code environments:
+alias claude-work="CLAUDE_CONFIG_DIR=~/.claude claude"
+alias claude-personal="CLAUDE_CONFIG_DIR=~/.claude-personal claude"

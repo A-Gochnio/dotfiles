@@ -77,6 +77,11 @@ export LANG=en_US.UTF-8
 source "$DOTFILES"/source.zsh
 
 export NVM_DIR="$HOME/.nvm"
+# Put nvm default node on PATH immediately (avoids lazy-load issues in non-interactive shells like Claude Code)
+# nvm still works — calling `nvm use <version>` will override this as usual
+export PATH="$NVM_DIR/versions/node/v22.22.0/bin:$PATH"
+# No-op fallback for zsh-nvm lazy-load shims in non-interactive contexts (suppresses "command not found" warning)
+type _zsh_nvm_load &>/dev/null || _zsh_nvm_load() { :; }
 # This is commented out for performance reasons. A script "nvm_init" has been added to run these command when needed.
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion"
@@ -106,3 +111,4 @@ fpath=(/Users/agochnio/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
 # End of Docker CLI completions
+export PATH="$HOME/.local/bin:$PATH"
