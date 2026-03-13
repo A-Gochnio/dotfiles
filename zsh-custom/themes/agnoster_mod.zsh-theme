@@ -74,47 +74,57 @@ prompt_end() {
   CURRENT_BG=''
 }
 
+# Measure visible column width of a prompt string by stripping zsh escapes
+prompt_visible_length() {
+  local prompt_text="$1"
+  local zero='%([BSUbfksu]|([FK]|){*})'
+  local expanded="${(S%%)prompt_text//$~zero/}"
+  echo ${#expanded}
+}
+
 ### Prompt components
 # Each component will draw itself, and hide itself if no information needs to be shown
 
 # Context: user@hostname (who am I and where am I)
 prompt_context() {
   if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-    prompt_segment white black "%(!.%{%F{yellow}%}.)$USER@%m"
+    if (( _PROMPT_SHRINK_LEVEL >= 2 )); then
+      prompt_segment white black "%(!.%{%F{yellow}%}.)$USER"
+    else
+      prompt_segment white black "%(!.%{%F{yellow}%}.)$USER@%m"
+    fi
   fi
 }
 
-# Git: branch/detached head, dirty status
-prompt_git() {
+# Cache expensive git operations once per prompt render
+_cache_git_state() {
+  _CACHED_GIT_IN_REPO=0
+  _CACHED_GIT_DIRTY=""
+  _CACHED_GIT_REF=""
+  _CACHED_GIT_MODE=""
+  _CACHED_VCS_INFO=""
+
   (( $+commands[git] )) || return
-  local PL_BRANCH_CHAR
-  () {
-    local LC_ALL="" LC_CTYPE="en_US.UTF-8"
-    PL_BRANCH_CHAR=$'\ue0a0'         # 
-  }
-  local ref dirty mode repo_path
+
+  local repo_path
   repo_path=$(git rev-parse --git-dir 2>/dev/null)
 
   if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
-    dirty=$(parse_git_dirty)
-    ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git rev-parse --short HEAD 2> /dev/null)"
-    if [[ -n $dirty ]]; then
-      prompt_segment yellow black
-    else
-      prompt_segment green black
-    fi
+    _CACHED_GIT_IN_REPO=1
+    _CACHED_GIT_DIRTY=$(parse_git_dirty)
+    _CACHED_GIT_REF=$(git symbolic-ref HEAD 2>/dev/null) || \
+      _CACHED_GIT_REF="➦ $(git rev-parse --short HEAD 2>/dev/null)"
 
     if [[ -e "${repo_path}/BISECT_LOG" ]]; then
-      mode=" <B>"
+      _CACHED_GIT_MODE=" <B>"
     elif [[ -e "${repo_path}/MERGE_HEAD" ]]; then
-      mode=" >M<"
+      _CACHED_GIT_MODE=" >M<"
     elif [[ -e "${repo_path}/rebase" || -e "${repo_path}/rebase-apply" || -e "${repo_path}/rebase-merge" || -e "${repo_path}/../.dotest" ]]; then
-      mode=" >R>"
+      _CACHED_GIT_MODE=" >R>"
     fi
 
     setopt promptsubst
     autoload -Uz vcs_info
-
     zstyle ':vcs_info:*' enable git
     zstyle ':vcs_info:*' get-revision true
     zstyle ':vcs_info:*' check-for-changes true
@@ -123,7 +133,31 @@ prompt_git() {
     zstyle ':vcs_info:*' formats ' %u%c'
     zstyle ':vcs_info:*' actionformats ' %u%c'
     vcs_info
-    echo -n "${ref/refs\/heads\//$PL_BRANCH_CHAR }${vcs_info_msg_0_%% }${mode}"
+    _CACHED_VCS_INFO="${vcs_info_msg_0_%% }"
+  fi
+}
+
+# Git: branch/detached head, dirty status
+prompt_git() {
+  (( _CACHED_GIT_IN_REPO )) || return
+  local PL_BRANCH_CHAR
+  () {
+    local LC_ALL="" LC_CTYPE="en_US.UTF-8"
+    PL_BRANCH_CHAR=$'\ue0a0'
+  }
+
+  if [[ -n $_CACHED_GIT_DIRTY ]]; then
+    prompt_segment yellow black
+  else
+    prompt_segment green black
+  fi
+
+  if (( _PROMPT_SHRINK_LEVEL >= 1 )); then
+    # Shrunk: icon + staged/unstaged icons + mode only
+    echo -n "${PL_BRANCH_CHAR}${_CACHED_VCS_INFO}${_CACHED_GIT_MODE}"
+  else
+    # Full: branch name + staged/unstaged + mode
+    echo -n "${_CACHED_GIT_REF/refs\/heads\//$PL_BRANCH_CHAR }${_CACHED_VCS_INFO}${_CACHED_GIT_MODE}"
   fi
 }
 
@@ -187,7 +221,13 @@ prompt_hg() {
 
 # Dir: current working directory
 prompt_dir() {
-  prompt_segment blue black '%~'
+  if (( _PROMPT_SHRINK_LEVEL >= 4 )); then
+    return
+  elif (( _PROMPT_SHRINK_LEVEL >= 3 )); then
+    prompt_segment blue black '%1~'
+  else
+    prompt_segment blue black '%~'
+  fi
 }
 
 # Virtualenv: current working virtualenv
@@ -213,8 +253,7 @@ prompt_status() {
 }
 
 ## Main prompt
-build_prompt() {
-  RETVAL=$?
+_build_prompt_inner() {
   prompt_status
   prompt_virtualenv
   prompt_context
@@ -223,6 +262,25 @@ build_prompt() {
   prompt_bzr
   prompt_hg
   prompt_end
+}
+
+build_prompt() {
+  RETVAL=$?
+  local max_width=$(( COLUMNS / 2 ))
+
+  _cache_git_state
+
+  local level
+  for level in 0 1 2 3 4; do
+    _PROMPT_SHRINK_LEVEL=$level
+    CURRENT_BG='NONE'
+    local candidate=$(_build_prompt_inner)
+    local vis_len=$(prompt_visible_length "$candidate")
+    if (( vis_len <= max_width )) || (( level == 4 )); then
+      echo -n "$candidate"
+      return
+    fi
+  done
 }
 
 PROMPT='%{%f%b%k%}$(build_prompt) '
