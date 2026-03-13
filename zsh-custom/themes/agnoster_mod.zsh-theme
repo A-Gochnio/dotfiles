@@ -140,6 +140,7 @@ _cache_git_state() {
 # Git: branch/detached head, dirty status
 prompt_git() {
   (( _CACHED_GIT_IN_REPO )) || return
+  (( _PROMPT_SHRINK_LEVEL >= 5 )) && return
   local PL_BRANCH_CHAR
   () {
     local LC_ALL="" LC_CTYPE="en_US.UTF-8"
@@ -271,12 +272,12 @@ build_prompt() {
   _cache_git_state
 
   local level
-  for level in 0 1 2 3 4; do
+  for level in 0 1 2 3 4 5; do
     _PROMPT_SHRINK_LEVEL=$level
     CURRENT_BG='NONE'
     local candidate=$(_build_prompt_inner)
     local vis_len=$(prompt_visible_length "$candidate")
-    if (( vis_len <= max_width )) || (( level == 4 )); then
+    if (( vis_len <= max_width )) || (( level == 5 )); then
       echo -n "$candidate"
       return
     fi
