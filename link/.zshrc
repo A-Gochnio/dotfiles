@@ -56,15 +56,11 @@ COMPLETION_WAITING_DOTS="true"
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
-#zsh-nvm plugin settings:
-export NVM_COMPLETION=true
-export NVM_LAZY_LOAD=true
-
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(colored-man-pages common-aliases tmux zsh-nvm)
+plugins=(colored-man-pages common-aliases tmux)
 
 # User configuration
 
@@ -80,14 +76,20 @@ export LANG=en_US.UTF-8
 source "$DOTFILES"/source.zsh
 
 export NVM_DIR="$HOME/.nvm"
-# Put nvm default node on PATH immediately (avoids lazy-load issues in non-interactive shells like Claude Code)
-# nvm still works — calling `nvm use <version>` will override this as usual
-export PATH="$NVM_DIR/versions/node/v22.22.0/bin:$PATH"
-# No-op fallback for zsh-nvm lazy-load shims in non-interactive contexts (suppresses "command not found" warning)
-type _zsh_nvm_load &>/dev/null || _zsh_nvm_load() { :; }
-# This is commented out for performance reasons. A script "nvm_init" has been added to run these command when needed.
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion"
+# Put nvm default node on PATH dynamically (follows `nvm alias default <version>`)
+_nvm_default=$(cat "$NVM_DIR/alias/default" 2>/dev/null)
+_nvm_default=${_nvm_default#v}
+if [[ -n "$_nvm_default" ]]; then
+  _nvm_node_bin=$(ls -d "$NVM_DIR/versions/node/v${_nvm_default}"*/bin 2>/dev/null | sort -V | tail -1)
+  [[ -n "$_nvm_node_bin" ]] && export PATH="$_nvm_node_bin:$PATH"
+  unset _nvm_default _nvm_node_bin
+fi
+# Lazy nvm: sources nvm.sh on first `nvm` call (avoids slow nvm.sh at startup)
+nvm() {
+  unset -f nvm
+  source "$NVM_DIR/nvm.sh"
+  nvm "$@"
+}
 
 export NODE_OPTIONS=--max_old_space_size=4096
 
