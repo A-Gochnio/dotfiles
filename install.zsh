@@ -53,8 +53,16 @@ source ~/.powerline_fonts/install.sh
 echo
 cp -rf "$DOTFILES"/conf/agnoster.zsh-theme  "$ZSH_CUSTOM"/themes/
 
-# install zsh-nvm plugin (for node version mgmt)
-git clone https://github.com/lukechilds/zsh-nvm ~/.dotfiles/zsh-custom/plugins/zsh-nvm
+# install nvm (official installer) + Node 24 LTS as the default.
+# PROFILE=/dev/null stops the installer appending init lines to .zshrc —
+# .zshrc and .zprofile already source scripts/nvm_default_path.zsh.
+export NVM_DIR="$HOME/.nvm"
+if [ ! -s "$NVM_DIR/nvm.sh" ]; then
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.5/install.sh | PROFILE=/dev/null bash
+fi
+source "$NVM_DIR/nvm.sh"
+nvm install 24
+nvm alias default 24
 
 # do the linking
 for link_file in "$DOTFILES"/link/.[^.]*; do
