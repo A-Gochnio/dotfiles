@@ -1,1 +1,4 @@
-ssh-add -A 2>/dev/null
+# Load ssh keys stored in the macOS keychain.
+# (--apple-load-keychain replaced -A in macOS 12; keys must be added once
+# with `ssh-add --apple-use-keychain ~/.ssh/<key>` on a new machine.)
+ssh-add --apple-load-keychain 2>/dev/null || ssh-add -A 2>/dev/null

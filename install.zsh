@@ -8,50 +8,44 @@ elif [[ `uname` == 'Darwin' ]]; then
 fi
 
 export DOTFILES="$HOME/.dotfiles"
-ZSH_CUSTOM="$HOME/.oh-my-zsh/"
 
-# osx
-if [[ $OS == 'osx' ]]; then
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  INSTALL="brew update && brew"
-  brew install gnu-sed
-  brew install nano
-  brew install tmux
-  cp "$DOTFILES"/conf/javascript.nanorc /usr/local/share/nano
-  cp "$DOTFILES"/conf/.nanorc-osx ~/.nanorc
-elif [[ $OS == 'linux' ]]; then
-# ubuntu
-  INSTALL="apt-get update && apt-get install"
-  cp "$DOTFILES"/conf/javascript.nanorc /usr/share/nano
-  cp "$DOTFILES"/conf/.nanorc-linux ~/.nanorc
-fi
-
-if test ! -d "$ZSH_CUSTOM"; then
-  sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-fi
-
-# create dotfile directory if needed
+# get the repo first — everything below uses files from it
 if test ! -d "$DOTFILES"; then
   git clone https://github.com/A-Gochnio/dotfiles.git "$DOTFILES"
 fi
-
-# go to repo
-cd $DOTFILES
-
-# update to newest version
+cd "$DOTFILES"
 git pull
 
-# download necessary things:
-# tmux plugin manager
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+# osx
+if [[ $OS == 'osx' ]]; then
+  if ! command -v brew >/dev/null 2>&1; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
+  # put brew on PATH for the rest of this script (Apple Silicon, then Intel fallback)
+  eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null)" || eval "$(/usr/local/bin/brew shellenv)"
+  brew bundle --file="$DOTFILES/Brewfile"
+  # custom JS syntax next to brew-nano's syntax files (included by link/.nanorc)
+  mkdir -p "$(brew --prefix)/share/nano"
+  cp "$DOTFILES"/conf/javascript.nanorc "$(brew --prefix)/share/nano/"
+elif [[ $OS == 'linux' ]]; then
+# ubuntu
+  cp "$DOTFILES"/conf/javascript.nanorc /usr/share/nano
+fi
 
-# fonts for terminal
-git clone https://github.com/powerline/fonts.git ~/.powerline_fonts
-source ~/.powerline_fonts/install.sh
+# oh-my-zsh (unattended: don't switch shell or replace .zshrc — linking handles it)
+if test ! -d "$HOME/.oh-my-zsh"; then
+  RUNZSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+fi
 
-# oh-my-zsh theme
-echo
-cp -rf "$DOTFILES"/conf/agnoster.zsh-theme  "$ZSH_CUSTOM"/themes/
+# tmux plugin manager (inside tmux, press prefix + I to install plugins)
+[ -d ~/.tmux/plugins/tpm ] || git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+# fonts for terminal (agnoster_mod theme needs powerline glyphs —
+# remember to select a Powerline font in the terminal profile afterwards)
+if [ ! -d ~/.powerline_fonts ]; then
+  git clone https://github.com/powerline/fonts.git ~/.powerline_fonts
+  source ~/.powerline_fonts/install.sh
+fi
 
 # install nvm (official installer) + Node 24 LTS as the default.
 # PROFILE=/dev/null stops the installer appending init lines to .zshrc —
@@ -77,6 +71,9 @@ for link_file in "$DOTFILES"/link/.[^.]*; do
   fi
   ln -s "$link_file" ~/"$(basename "$link_file")"
 done
+
+# wire the global gitignore that the link loop just placed at ~/.gitignore_global
+git config --global core.excludesFile ~/.gitignore_global
 
 # do the sourcing
 source ~/.zshrc

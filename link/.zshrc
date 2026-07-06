@@ -64,7 +64,7 @@ plugins=(colored-man-pages common-aliases tmux)
 
 # User configuration
 
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/usr/local/sbin:/sbin:/usr/lib/google-dartlang/bin:/usr/bin/python3"
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/lib/spectrum.zsh
@@ -103,7 +103,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin/"
 
 # brew for Apple Sillicon
-eval $(/opt/homebrew/bin/brew shellenv)
+[ -x /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
 # The following lines have been added by Docker Desktop to enable Docker CLI completions.
 fpath=("$HOME/.docker/completions" $fpath)
 export PATH="$HOME/.local/bin:$PATH"

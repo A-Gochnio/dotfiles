@@ -1,6 +1,5 @@
 alias wttr="curl -4 wttr.in/"
 alias untar="tar xvzf"
-alias nvm_init="source ~/.dotfiles/scripts/nvm_init.sh"
 alias cp="cp -R"
 
 # Claude Code environments:
