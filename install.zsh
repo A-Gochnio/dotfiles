@@ -37,7 +37,8 @@ if test ! -d "$HOME/.oh-my-zsh"; then
   RUNZSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 fi
 
-# tmux plugin manager (inside tmux, press prefix + I to install plugins)
+# tmux plugin manager — the plugins listed in .tmux.conf are installed further
+# down, after the link loop puts .tmux.conf in place (tpm reads it to know them)
 [ -d ~/.tmux/plugins/tpm ] || git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # fonts for terminal (agnoster_mod theme needs powerline glyphs —
@@ -74,6 +75,15 @@ done
 
 # wire the global gitignore that the link loop just placed at ~/.gitignore_global
 git config --global core.excludesFile ~/.gitignore_global
+
+# install the tmux plugins now that ~/.tmux.conf is linked. Without this the
+# plugin list is only a set of options and nothing is ever downloaded, so
+# resurrect/continuum silently don't save sessions. Equivalent to prefix + I.
+if command -v tmux >/dev/null 2>&1; then
+  tmux start-server
+  tmux source-file ~/.tmux.conf
+  ~/.tmux/plugins/tpm/bin/install_plugins
+fi
 
 # do the sourcing
 source ~/.zshrc

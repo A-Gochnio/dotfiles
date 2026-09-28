@@ -22,3 +22,6 @@
 
 # Don't commit oh-my-zsh plugins
 /zsh-custom/plugins/
+
+# work related stuff that should not be comitted
+*WORK*

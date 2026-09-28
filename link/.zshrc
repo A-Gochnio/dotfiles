@@ -75,6 +75,9 @@ export LANG=en_US.UTF-8
 
 source "$DOTFILES"/source.zsh
 
+# brew for Apple Sillicon
+[ -x /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # nvm: default node on PATH + lazy loader (shared with .zprofile for login shells)
 source "$DOTFILES/scripts/nvm_default_path.zsh"
 
@@ -102,8 +105,6 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # docker
 export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin/"
 
-# brew for Apple Sillicon
-[ -x /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
 # The following lines have been added by Docker Desktop to enable Docker CLI completions.
 fpath=("$HOME/.docker/completions" $fpath)
 export PATH="$HOME/.local/bin:$PATH"
